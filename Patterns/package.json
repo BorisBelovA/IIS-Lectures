@@ -2,7 +2,7 @@
     "scripts": {
         "test-template-method": "mocha -r ts-node/register template-method/tests/index.spec.ts",
         "test-strategy": "mocha -r ts-node/register Strategy/tests/index.spec.ts",
-        "test-iterator": "mocha -r ts-node/register Iterator/tests/index.spec.ts",
+        "test-iterator": "mocha -r ts-node/register Iterator/tests/index.spec.ts"
     },
     "dependencies": {
         "@types/chai": "^4.2.3",

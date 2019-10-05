@@ -1,14 +1,20 @@
 "use strict";
-// const graph = {
-//     'a': ['b', 'c', 'd', 'e'],
-//     'b': ['a', 'e'],
-//     'c': ['a', 'd'],
-//     'd': ['a', 'c'],
-//     'e': ['a', 'b']
-// }
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
-var WidthIterator = /** @class */ (function () {
-    function WidthIterator(collection, startNode) {
+var GraphIterator = /** @class */ (function () {
+    function GraphIterator(collection, startNode) {
         /**
          * Очередь необработанных вершин
          */
@@ -20,6 +26,58 @@ var WidthIterator = /** @class */ (function () {
         this.collection = collection;
         this.currentNode = startNode;
         this.next();
+    }
+    Object.defineProperty(GraphIterator.prototype, "currentNode", {
+        get: function () {
+            return this._currentNode;
+        },
+        set: function (node) {
+            this._currentNode = node;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GraphIterator.prototype, "collection", {
+        get: function () {
+            return this._collection;
+        },
+        set: function (collection) {
+            this._collection = collection;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GraphIterator.prototype, "_rawNodes", {
+        get: function () {
+            return this.rawNodes;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(GraphIterator.prototype, "_processedNodes", {
+        get: function () {
+            return this.processedNodes;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    GraphIterator.prototype.addToRawNodes = function (nodes) {
+        if (nodes) {
+            for (var _i = 0, nodes_1 = nodes; _i < nodes_1.length; _i++) {
+                var node = nodes_1[_i];
+                if (node && this.processedNodes.indexOf(node) === -1) {
+                    this.rawNodes.push(node);
+                }
+            }
+        }
+    };
+    return GraphIterator;
+}());
+exports.GraphIterator = GraphIterator;
+var WidthIterator = /** @class */ (function (_super) {
+    __extends(WidthIterator, _super);
+    function WidthIterator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     WidthIterator.prototype.next = function () {
         if (this.processedNodes.indexOf(this.currentNode) < 0) {
@@ -33,71 +91,16 @@ var WidthIterator = /** @class */ (function () {
             this.currentNode = this.rawNodes[0];
             this.rawNodes.shift();
         }
-        //console.log(this.rawNodes, this.processedNodes);
-    };
-    Object.defineProperty(WidthIterator.prototype, "currentNode", {
-        get: function () {
-            return this._currentNode;
-        },
-        set: function (node) {
-            this._currentNode = node;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(WidthIterator.prototype, "collection", {
-        get: function () {
-            return this._collection;
-        },
-        set: function (collection) {
-            this._collection = collection;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(WidthIterator.prototype, "_rawNodes", {
-        get: function () {
-            return this.rawNodes;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(WidthIterator.prototype, "_processedNodes", {
-        get: function () {
-            return this.processedNodes;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    WidthIterator.prototype.addToRawNodes = function (nodes) {
-        if (nodes) {
-            for (var _i = 0, nodes_1 = nodes; _i < nodes_1.length; _i++) {
-                var node = nodes_1[_i];
-                if (node && this.processedNodes.indexOf(node) === -1) {
-                    this.rawNodes.push(node);
-                }
-            }
-        }
     };
     return WidthIterator;
-}());
+}(GraphIterator));
 exports.WidthIterator = WidthIterator;
-var DepthIterator = /** @class */ (function () {
-    function DepthIterator(collection, startNode) {
-        /**
-         * Очередь необработанных вершин
-         */
-        this.rawNodes = [];
-        /**
-         * Список обработанных вершин
-         */
-        this.processedNodes = [];
-        this.collection = collection;
-        this.currentNode = startNode;
-        this.next();
+var DepthIterator = /** @class */ (function (_super) {
+    __extends(DepthIterator, _super);
+    function DepthIterator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     DepthIterator.prototype.next = function () {
-        //console.log(this.currentNode)
         if (this.processedNodes.indexOf(this.currentNode) < 0) {
             var neighbours = this.collection.getNeignbours(this.currentNode);
             this.addToRawNodes(neighbours);
@@ -109,54 +112,9 @@ var DepthIterator = /** @class */ (function () {
             this.currentNode = this.rawNodes[this.rawNodes.length - 1];
             this.rawNodes.pop();
         }
-        //console.log(this.rawNodes, this.processedNodes)
-    };
-    Object.defineProperty(DepthIterator.prototype, "currentNode", {
-        get: function () {
-            return this._currentNode;
-        },
-        set: function (node) {
-            this._currentNode = node;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DepthIterator.prototype, "collection", {
-        get: function () {
-            return this._collection;
-        },
-        set: function (collection) {
-            this._collection = collection;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DepthIterator.prototype, "_rawNodes", {
-        get: function () {
-            return this.rawNodes;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(DepthIterator.prototype, "_processedNodes", {
-        get: function () {
-            return this.processedNodes;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    DepthIterator.prototype.addToRawNodes = function (nodes) {
-        if (nodes) {
-            for (var _i = 0, nodes_2 = nodes; _i < nodes_2.length; _i++) {
-                var node = nodes_2[_i];
-                if (node && this.processedNodes.indexOf(node) === -1) {
-                    this.rawNodes.push(node);
-                }
-            }
-        }
     };
     return DepthIterator;
-}());
+}(GraphIterator));
 exports.DepthIterator = DepthIterator;
 var Graph = /** @class */ (function () {
     function Graph() {
@@ -170,7 +128,7 @@ var Graph = /** @class */ (function () {
     }
     Graph.prototype.createIterator = function (type) {
         if (type === 'width') {
-            return new WidthIterator(this, 'e');
+            return new WidthIterator(this, 'b');
         }
         else {
             return new DepthIterator(this, 'b');

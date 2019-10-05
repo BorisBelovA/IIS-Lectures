@@ -8,7 +8,7 @@ describe('Test', () => {
         expect(graph).to.exist;
     })
 
-    it("WidthIterator should return ['e', 'a', 'b', 'c', 'd' ]", () => {
+    it("WidthIterator should return [ 'b', 'a', 'e', 'c', 'd' ]", () => {
         const graph = new Graph();
         const widthIterator = graph.createIterator('width');
 
@@ -16,10 +16,10 @@ describe('Test', () => {
             widthIterator.next()
         }
 
-        expect(widthIterator._processedNodes).to.deep.equal(['e', 'a', 'b', 'c', 'd']);
+        expect(widthIterator._processedNodes).to.deep.equal([ 'b', 'a', 'e', 'c', 'd' ]);
     })
 
-    it("DepthIterator should return:  [ 'b', 'e', 'a', 'd', 'c' ]", () => {
+    it("DepthIterator should return: [ 'b', 'e', 'a', 'd', 'c' ]", () => {
         const graph = new Graph();
         const depthIterator = graph.createIterator('depth');
 
