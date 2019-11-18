@@ -64,8 +64,8 @@ var SpecieBuilderManager = /** @class */ (function () {
         return builder
             .setName('Reptile Nation')
             .setKind('Reptiles')
-            .setHomeWorld({ name: 'Earth', climate: 'Standart' })
-            .setPerks(['Intelligent', 'Agressive'])
+            .setHomeWorld({ name: 'Zorgo', climate: 'Desert' })
+            .setPerks(['Religios', 'Slow population growth', 'Long-living'])
             .getResults();
     };
     return SpecieBuilderManager;
@@ -106,6 +106,42 @@ var HumanTitan = /** @class */ (function () {
     };
     return HumanTitan;
 }());
+var ReptileCorvett = /** @class */ (function () {
+    function ReptileCorvett() {
+        this.numberOfSections = 3;
+    }
+    ReptileCorvett.prototype.fly = function () {
+        console.log('Reptile corvette is flying');
+    };
+    ReptileCorvett.prototype.shoot = function () {
+        console.log("Firing with reptile light weapons");
+    };
+    return ReptileCorvett;
+}());
+var ReptileCruiser = /** @class */ (function () {
+    function ReptileCruiser() {
+        this.numberOfSections = 5;
+    }
+    ReptileCruiser.prototype.fly = function () {
+        console.log('Reptile cruiser is flying');
+    };
+    ReptileCruiser.prototype.shoot = function () {
+        console.log("Firing with reptile heavy weapons");
+    };
+    return ReptileCruiser;
+}());
+var ReptileTitan = /** @class */ (function () {
+    function ReptileTitan() {
+        this.numberOfSections = 5;
+    }
+    ReptileTitan.prototype.fly = function () {
+        console.log('Reptile titan is flying');
+    };
+    ReptileTitan.prototype.shoot = function () {
+        console.log("Firing with reptile super-heavy weapons");
+    };
+    return ReptileTitan;
+}());
 var SpaceShipsFactory = /** @class */ (function () {
     function SpaceShipsFactory() {
     }
@@ -127,29 +163,37 @@ var HumanSpaceShipsFactory = /** @class */ (function (_super) {
     };
     return HumanSpaceShipsFactory;
 }(SpaceShipsFactory));
+var ReptileSpaceShipsFactory = /** @class */ (function (_super) {
+    __extends(ReptileSpaceShipsFactory, _super);
+    function ReptileSpaceShipsFactory() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ReptileSpaceShipsFactory.prototype.createCorvette = function () {
+        return new ReptileCorvett();
+    };
+    ReptileSpaceShipsFactory.prototype.createCruser = function () {
+        return new ReptileCruiser();
+    };
+    ReptileSpaceShipsFactory.prototype.createTitan = function () {
+        return new ReptileTitan();
+    };
+    return ReptileSpaceShipsFactory;
+}(SpaceShipsFactory));
 var specieManager = new SpecieBuilderManager();
-var choosenSpecie = specieManager.buildHumanSpecie(new SpecieBuilder());
-console.log(choosenSpecie.kind);
+var choosenSpecie = specieManager.buildReptileSpecie(new SpecieBuilder());
 var spaceShipsFactory = null;
 switch (choosenSpecie.kind) {
     case 'Human': {
         spaceShipsFactory = new HumanSpaceShipsFactory();
     }
+    case 'Reptiles': {
+        spaceShipsFactory = new ReptileSpaceShipsFactory();
+    }
 }
 var corvett = spaceShipsFactory.createCorvette();
 var cruiser = spaceShipsFactory.createCruser();
-var tTitan = spaceShipsFactory.createTitan();
+var titan = spaceShipsFactory.createTitan();
 corvett.fly();
 corvett.shoot();
 cruiser.fly();
 cruiser.shoot();
-/*const humanFactory = new HumanSpaceShipsFactory();
-const hCorvett = humanFactory.createCorvette()
-const hCruiser = humanFactory.createCruser()
-const hTitan = humanFactory.createTitan()
-
-hCorvett.fly()
-hCorvett.shoot()
-
-hCruiser.fly()
-hCruiser.shoot(); */
