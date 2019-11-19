@@ -131,6 +131,44 @@ class HumanTitan implements ITitan {
     }
 }
 
+
+class ReptileCorvett implements ICorvette {
+    
+    numberOfSections = 3;
+
+    public fly(): void {
+        console.log('Reptile corvette is flying');
+    }
+
+    public shoot(): void {
+        console.log("Firing with reptile light weapons");
+    }
+}
+
+class ReptileCruiser implements ICruiser {
+    numberOfSections = 5;
+
+    public fly(): void {
+        console.log('Reptile cruiser is flying');
+    }
+
+    public shoot(): void {
+        console.log("Firing with reptile heavy weapons");
+    }
+}
+
+class ReptileTitan implements ITitan {
+    numberOfSections = 5;
+
+    public fly(): void {
+        console.log('Reptile titan is flying');
+    }
+
+    public shoot(): void {
+        console.log("Firing with reptile super-heavy weapons");
+    }
+}
+
 abstract class SpaceShipsFactory {
     abstract createCorvette(): ICorvette;
     abstract createCruser(): ICruiser;
@@ -152,9 +190,24 @@ class HumanSpaceShipsFactory extends SpaceShipsFactory {
     }
 }
 
+class ReptileSpaceShipsFactory extends SpaceShipsFactory {
+    createCorvette() {
+        return new ReptileCorvett();
+    }
+
+    createCruser(){
+        return new ReptileCruiser();
+    }
+
+    createTitan(){
+        return new ReptileTitan();
+    }
+}
+
+
 const specieManager = new SpecieBuilderManager();
 
-const choosenSpecie = specieManager.buildHumanSpecie(new SpecieBuilder());
+const choosenSpecie = specieManager.buildReptileSpecie(new SpecieBuilder());
 
 let spaceShipsFactory: SpaceShipsFactory = null;
 
@@ -163,7 +216,7 @@ switch(choosenSpecie.kind){
         spaceShipsFactory = new HumanSpaceShipsFactory();
     }
     case 'Reptiles': {
-        spaceShipsFactory = new HumanSpaceShipsFactory();        
+        spaceShipsFactory = new ReptileSpaceShipsFactory();        
     }
 }
 
