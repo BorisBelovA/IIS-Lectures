@@ -23,13 +23,38 @@ var UrgencyEnum;
 class LocalDelieryService {
     constructor() {
         this.defaultDeliveryCost = 100;
-        this.multiplicationFactor = 0;
+        this.multiplicationFactor = 1;
+        this.nextDH = null;
     }
     deliver(order) {
-        if (order.deliveryOptions.urgency = UrgencyEnum.QUICK) {
+        /*if(order.deliveryOptions.urgency = UrgencyEnum.QUICK){
             this.defaultDeliveryCost *= 2;
+        }*/
+        order.cost += this.defaultDeliveryCost * this.multiplicationFactor;
+        console.log('По городу');
+        if (this.nextDH) {
+            this.nextDH.deliver(order);
         }
-        console.log(this.defaultDeliveryCost);
+    }
+    setNextDH(DH) {
+        this.nextDH = DH;
+    }
+}
+class CountryDeliveryService {
+    constructor() {
+        this.defaultDeliveryCost = 200;
+        this.multiplicationFactor = 2;
+        this.nextDH = null;
+    }
+    deliver(order) {
+        console.log('По всей стране доставка');
+        order.cost += this.defaultDeliveryCost * this.multiplicationFactor;
+        if (this.nextDH) {
+            this.nextDH.deliver(order);
+        }
+    }
+    setNextDH(DH) {
+        this.nextDH = DH;
     }
 }
 class InternetShop {
@@ -41,8 +66,18 @@ class InternetShop {
         };
     }
     calculateDelivery() {
+        if (this.order.deliveryOptions.departure === this.order.deliveryOptions.destination) {
+            this.deliveryService = new LocalDelieryService();
+        }
+        else {
+            const cS = new CountryDeliveryService();
+            cS.setNextDH(new LocalDelieryService());
+            this.deliveryService = cS;
+        }
+        this.deliveryService.deliver(this.order);
     }
     deliverOrder() {
+        //this.delivertService.deliver(this.order);
         // if в одном городе
         // then LocalDliveryService.deliver
         // else CountryDeliverySevice.deliver
@@ -51,19 +86,35 @@ class InternetShop {
     get order() {
         return this._order;
     }
+    set order(order) {
+        this._order = order;
+    }
+    get deliveryService() {
+        return this._deliveryService;
+    }
+    set deliveryService(service) {
+        this._deliveryService = service;
+    }
 }
 const order = {
     goods: ['1', '2'],
     cost: 1200,
     deliveryOptions: {
         departure: "Moscow",
-        destination: "Moscow",
+        destination: "Vladivostok",
         urgency: UrgencyEnum.QUICK,
         deliveryCost: 0,
         multiplicationFactor: 0,
     }
 };
 const internetShop = new InternetShop();
+internetShop.order = order;
 console.log(internetShop.order);
-const localDelivery = new LocalDelieryService();
-localDelivery.deliver(order);
+internetShop.calculateDelivery();
+console.log(internetShop.order);
+//const localDelivery = new LocalDelieryService();
+//localDelivery.deliver(order)
+/**
+ * А что если сделать  степпер
+ * Каждый степ которого - один хэндлер из цепочки
+ */ 

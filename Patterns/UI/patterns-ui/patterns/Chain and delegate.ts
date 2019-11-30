@@ -10,17 +10,17 @@
  * И в ответ выдавать простой чек
  */
 
- /**
-  * Если в город отправки и прибытия одинаков то делегируем в службу 
-  * Если города разные, то отпарвляем в цепочку вниз
-  * Если доставка в другой город и не срочная, то почта
-  * Если доставка в другой город и срочная, то спец служба
-  */
+/**
+ * Если в город отправки и прибытия одинаков то делегируем в службу 
+ * Если города разные, то отпарвляем в цепочку вниз
+ * Если доставка в другой город и не срочная, то почта
+ * Если доставка в другой город и срочная, то спец служба
+ */
 
 export enum UrgencyEnum {
-    QUICK = 1,
+    QUICK = 3,
     MEDIUM = 2,
-    LOW = 3
+    LOW = 1
 }
 
 
@@ -29,7 +29,6 @@ export interface DeliveryOptions {
     destination: string;
     urgency: UrgencyEnum,
     deliveryCost: number,
-    multiplicationFactor: number,
 }
 
 export interface IOrder {
@@ -39,7 +38,7 @@ export interface IOrder {
 }
 
 export interface DeliveryService {
-    defaultDeliveryCost: number,
+    defaultDeliveryCost: number;
     multiplicationFactor: number;
     nextDH: DeliveryService;
     deliver(order: IOrder);
@@ -51,17 +50,14 @@ export class LocalDelieryService implements DeliveryService {
     defaultDeliveryCost = 100;
     multiplicationFactor = 1;
     nextDH = null;
-    deliver(order: IOrder){
-        /*if(order.deliveryOptions.urgency = UrgencyEnum.QUICK){
-            this.defaultDeliveryCost *= 2;
-        }*/
-        order.cost += this.defaultDeliveryCost * this.multiplicationFactor;
+    deliver(order: IOrder) {
+        order.deliveryOptions.deliveryCost += this.defaultDeliveryCost * this.multiplicationFactor * order.deliveryOptions.urgency;
         console.log('По городу')
-        if(this.nextDH){
-            this.nextDH.deliver(order)
+        if (this.nextDH) {
+            this.nextDH.deliver(order);
         }
     }
-    setNextDH(DH: DeliveryService){
+    setNextDH(DH: DeliveryService) {
         this.nextDH = DH;
     }
 }
@@ -71,13 +67,13 @@ export class CountryDeliveryService implements DeliveryService {
     multiplicationFactor = 2;
     nextDH = null;
     deliver(order: IOrder) {
-        console.log('По всей стране доставка')
-        order.cost += this.defaultDeliveryCost*this.multiplicationFactor;
-        if(this.nextDH){
-            this.nextDH.deliver(order)
+        console.log('По всей стране доставка');
+        order.deliveryOptions.deliveryCost += this.defaultDeliveryCost * this.multiplicationFactor * order.deliveryOptions.urgency;
+        if (this.nextDH) {
+            this.nextDH.deliver(order);
         }
     }
-    setNextDH(DH: DeliveryService){
+    setNextDH(DH: DeliveryService) {
         this.nextDH = DH;
     }
 }
@@ -91,21 +87,25 @@ export class InternetShop {
         this._order = {
             goods: null,
             cost: 0,
-            deliveryOptions: null
+            deliveryOptions: {
+                departure: '',
+                destination: '',
+                urgency: 0,
+                deliveryCost: 0,
+            }
         }
     }
 
     calculateDelivery() {
-        if(this.order.deliveryOptions.departure === this.order.deliveryOptions.destination){
+        if (this.order.deliveryOptions.departure === this.order.deliveryOptions.destination) {
             this.deliveryService = new LocalDelieryService();
-        }else{
+        } else {
 
-            const cS = new CountryDeliveryService()
+            const cS = new CountryDeliveryService();
             cS.setNextDH(new LocalDelieryService());
             this.deliveryService = cS;
         }
-        this.deliveryService.deliver(this.order)
-
+        this.deliveryService.deliver(this.order);
     }
 
     deliverOrder() {
@@ -113,7 +113,7 @@ export class InternetShop {
     }
 
     get order(): IOrder {
-        return this._order
+        return this._order;
     }
 
     set order(order: IOrder) {
@@ -139,7 +139,6 @@ const order: IOrder = {
         destination: "Vladivostok",
         urgency: UrgencyEnum.QUICK,
         deliveryCost: 0,
-        multiplicationFactor: 0,
     }
 }
 
