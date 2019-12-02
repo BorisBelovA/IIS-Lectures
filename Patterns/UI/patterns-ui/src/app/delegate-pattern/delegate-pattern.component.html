@@ -1,0 +1,63 @@
+<div class="delegate-chain">
+  <mat-horizontal-stepper #stepper>
+    <mat-step [stepControl]="firstFormGroup" [editable]="isEditable">
+      <form [formGroup]="firstFormGroup">
+        <ng-template matStepLabel>Выберите товар</ng-template>
+        <mat-form-field>
+          <mat-label>Товар</mat-label>
+          <mat-select formControlName="selectedGood" name="goods">
+            <mat-option *ngFor="let good of goods" [value]="good">
+              {{good.name}} --- {{good.cost}}$
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <p *ngIf="selectedGood">{{selectedGood.name}}</p>
+        <div>
+          <button mat-button matStepperNext>Далее</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="secondFormGroup" [editable]="isEditable">
+      <form [formGroup]="secondFormGroup">
+        <ng-template matStepLabel>Заполните информацию о доставке</ng-template>
+        <mat-form-field>
+          <input matInput placeholder="Город отправки" formControlName="departure" required>
+        </mat-form-field> <br>
+        <mat-form-field>
+          <input matInput placeholder="Город доставки" formControlName="destination" required>
+        </mat-form-field> <br>
+        <mat-form-field>
+          <mat-label>Срочность доставки</mat-label>
+          <mat-select formControlName="urgency" name="urgency">
+            <mat-option *ngFor="let urgency of deliveryUrgencies" [value]="urgency.value">
+              {{urgency.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Назад</button>
+          <button mat-button matStepperNext (click)="calculateTotal()">Далее</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Параметры заказа</ng-template>
+      <div>Чек на заказ</div>
+      <div *ngIf="shop.order">
+        Выбранные товар: {{shop.order.goods}} --- {{shop.order.cost}}
+      </div>
+      <div *ngIf="shop.order">
+        <p>Сросночть доставки: {{shop.order.deliveryOptions.urgency}}</p>
+        <p>Стоимость доставки: {{shop.order.deliveryOptions.deliveryCost}}</p>
+      </div>
+      <hr>
+      <div>
+        Общая сумма заказа: {{ shop.order.cost + shop.order.deliveryOptions.deliveryCost }}
+      </div>
+      <div>
+        <button mat-button matStepperPrevious>Назад</button>
+        <button mat-button (click)="stepper.reset()">Сбросить заказ</button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>
