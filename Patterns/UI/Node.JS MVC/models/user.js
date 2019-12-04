@@ -19,7 +19,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 // установка схемы
 const userScheme = new Schema({
+    id: Number,
     name: String,
-    age: Number
+    age: Number,
 });
 module.exports = mongoose.model("usersdb", userScheme);

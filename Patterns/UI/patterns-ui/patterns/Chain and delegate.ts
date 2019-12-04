@@ -27,8 +27,8 @@ export enum UrgencyEnum {
 export interface DeliveryOptions {
     departure: string;
     destination: string;
-    urgency: UrgencyEnum,
-    deliveryCost: number,
+    urgency: UrgencyEnum;
+    deliveryCost: number;
 }
 
 export interface IOrder {

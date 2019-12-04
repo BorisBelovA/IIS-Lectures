@@ -40,6 +40,10 @@ export class DelegatePatternComponent implements OnInit {
 
   public shop = new InternetShop();
 
+  public mapToUrgencyName(urgency: UrgencyEnum) {
+    return urgency ? this.deliveryUrgencies.find(u => u.value === urgency).name : null;
+  }
+
   constructor(private _formBuilder: FormBuilder) { }
 
   ngOnInit() {

@@ -47,7 +47,7 @@
         Выбранные товар: {{shop.order.goods}} --- {{shop.order.cost}}
       </div>
       <div *ngIf="shop.order">
-        <p>Сросночть доставки: {{shop.order.deliveryOptions.urgency}}</p>
+        <p>Сросночть доставки: {{mapToUrgencyName(shop.order.deliveryOptions.urgency)}}</p>
         <p>Стоимость доставки: {{shop.order.deliveryOptions.deliveryCost}}</p>
       </div>
       <hr>

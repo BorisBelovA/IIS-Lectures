@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавление пользователя</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <h1>Добавление пользователя</h1>
+     <form action="saveUser" method="POST">
+        <input name="id" value="{{user.id}}" hidden="true">
+        <label>Имя</label>
+        <input name="name" value="{{user.name}}" /><br><br>
+        <label>Возраст</label>
+        <input name="age" type="number" min="1" max="110" value="{{user.age}}" /><br><br>
+        <input type="submit" value="Сохранить" />
+     </form>
+     <a href="/users">К списку пользователей</a>
+</body>
+<html>

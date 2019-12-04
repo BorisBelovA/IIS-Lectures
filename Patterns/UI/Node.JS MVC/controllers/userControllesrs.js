@@ -5,6 +5,7 @@ exports.addUser = function(request, response){
 };
 
 exports.getUsers = function(request, response){
+    
     User.find({}, function(err, allUsers){
         if(err) {
             console.log(err);
@@ -15,30 +16,45 @@ exports.getUsers = function(request, response){
             })
         }
     })
-    // response.render('users.hbs', {
-    //     users: User.getAll()
-    // })
 };
 
 exports.postUder = function(request, response){
     if(!request.body) return response.sendStatus(400);
     const userName = request.body.name;
     const userAge = request.body.age;
-    const user = new User({name: userName, age: userAge});
-     
-    user.save(function(err){
-        if(err) return console.log(err);
-        response.redirect("/users");
-    });
-    // const username = request.body.name;
-    // const userage = request.body.age;
-    // const user = new User(username, userage);
-    // user.save();
-    // response.redirect("/users");
+    let amount = null;
+    User.countDocuments()
+    .then(count => amount = count)
+    .then(() => console.log(amount))
+    .then(() => {
+        const user = new User({id: amount+1, name: userName, age: userAge});
+        user.save(function(err){
+            if(err) return console.log(err);
+            response.redirect("/users");
+        });
+    })
 }
 
 exports.getUser = function(request, response){
     const userId = request.params.id;
-    console.log(userId);
-    response.send(userId)
+    User.find({id: userId})
+    .then((u) => {
+        response.render('editUser.hbs', {
+            user: u[0]
+        })
+    })
+}
+
+exports.saveUser = function(request, response) {
+    if(!request.body) return response.sendStatus(400);
+    const userId = request.body.id;
+    const userName = request.body.name;
+    const userAge = request.body.age;
+    const user = new User({id: userId, name: userName, age: userAge})
+    User.findOne({id: userId})
+    .then((u) => {
+        u.overwrite({id: userId, name: userName, age: userAge})
+        u.save()
+        response.redirect('/users')
+    })
 }
