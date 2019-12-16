@@ -6,8 +6,8 @@
 </head>
 <body>
     <h1>Добавление пользователя</h1>
-     <form action="saveUser" method="POST">
-        <input name="id" value="{{user.id}}" hidden="true">
+     <form action="saveUser" method="POST" id="form"> 
+        <input name="id" value="{{user._id}}" hidden="true">
         <label>Имя</label>
         <input name="name" value="{{user.name}}" /><br><br>
         <label>Возраст</label>
@@ -15,5 +15,21 @@
         <input type="submit" value="Сохранить" />
      </form>
      <a href="/users">К списку пользователей</a>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:3001')
+        const form = document.getElementById('form');
+
+        /*form.addEventListener('submit', e => {
+            ws.send('Были изменены данные. Обновите страницу');
+        })*/
+
+
+        ws.onopen = () => console.log('ONLINE')
+
+        ws.onclose = () => console.log('DISCONNECTED')
+
+        ws.onmessage = response => console.log(response.data)
+    </script>
 </body>
 <html>

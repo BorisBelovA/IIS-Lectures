@@ -9,20 +9,110 @@
 <body>
     <a href="/users/create">Добавить пользователя</a>
     <h1>Список пользователей</h1>
-    <table>
-        <tr>
-            <th>Id</th>
-            <th>Имя</th>
-            <th>Возраст</th>
-        </tr>
-        {{#each users}}
-        <tr>
-            <td>{{this.id}}</td>
-            <td>{{this.name}}</td>
-            <td>{{this.age}}</td>
-            <td><a href='/users/edit/{{this.id}}''>Редактировать</a></td>
-        </tr>
-        {{/each}}
+    <table id="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Имя</th>
+                <th>Возраст</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each users}}
+            <tr>
+                <td>{{this._id}}</td>
+                <td>{{this.name}}</td>
+                <td>{{this.age}}</td>
+                <td><a href='/users/edit/{{this._id}}'>Редактировать</a></td>
+                <td><a href='/users/delete/{{this._id}}' id="delete-btn">Удалить</a></td>
+            </tr>
+            {{/each}}
+        </tbody>
     </table>
+    <script>
+        const ws = new WebSocket('ws://localhost:3001')
+
+        const deleteBtn = document.getElementById('delete-btn');
+        /*deleteBtn.addEventListener('click', e => {
+            ws.send('Клиент был удален, обновите страницу!')
+        })*/
+
+        ws.onopen = () => console.log('ONLINE')
+
+        ws.onclose = () => console.log('DISCONNECTED')
+
+        ws.onmessage = response => {
+            let { action, payload } = JSON.parse(response.data)
+            var tableRef = document.getElementById('table').getElementsByTagName('tbody')[0];
+
+            if (action === 'add') {
+                /*var newRow = tableRef.insertRow();
+
+                let editLinkElement = document.createElement('a')
+                editLinkElement.setAttribute('href', `/users/edit/${payload._id}`)
+                editLinkElement.innerText = 'Редактировать'
+
+                let removeLinkElement = document.createElement('a')
+                removeLinkElement.setAttribute('href', `/users/delete/${payload.id}`)
+                removeLinkElement.innerText = 'Удалить'
+
+                newRow.insertCell(0).appendChild(document.createTextNode(payload._id));
+                newRow.insertCell(1).appendChild(document.createTextNode(payload.name));
+                newRow.insertCell(2).appendChild(document.createTextNode(payload.age));
+                newRow.insertCell(3).appendChild(editLinkElement);
+                newRow.insertCell(4).appendChild(removeLinkElement);*/
+                console.log(payload)
+            }
+            if (action === 'delete') {
+                const users = payload.users;
+                while (tableRef.rows.length >  0) {
+                    tableRef.deleteRow(0);
+                }
+                users.forEach((user) => {
+                    var newRow = tableRef.insertRow();
+
+                    let editLinkElement = document.createElement('a')
+                    editLinkElement.setAttribute('href', `/users/edit/${user._id}`)
+                    editLinkElement.innerText = 'Редактировать'
+
+                    let removeLinkElement = document.createElement('a')
+                    removeLinkElement.setAttribute('href', `/users/delete/${user._id}`)
+                    removeLinkElement.innerText = 'Удалить'
+
+                    newRow.insertCell(0).appendChild(document.createTextNode(user._id));
+                    newRow.insertCell(1).appendChild(document.createTextNode(user.name));
+                    newRow.insertCell(2).appendChild(document.createTextNode(user.age));
+                    newRow.insertCell(3).appendChild(editLinkElement);
+                    newRow.insertCell(4).appendChild(removeLinkElement);
+                })
+
+            }
+            if (action === 'update') {
+                var tableRef = document.getElementById('table').getElementsByTagName('tbody')[0];
+                for(let i = 0; i< tableRef.rows.length; i++ ){
+                    if(tableRef.rows[i].cells[0].innerText === payload.id){
+                        tableRef.rows[i].cells[1].innerText = payload.name;
+                        tableRef.rows[i].cells[2].innerText = payload.age;
+                    }
+                }
+                /*let row = tableRef.rows[payload.id - 1]
+
+                let editLinkElement = document.createElement('a')
+                editLinkElement.setAttribute('href', `/users/edit/${payload._id}`)
+                editLinkElement.innerText = 'Редактировать'
+
+                let removeLinkElement = document.createElement('a')
+                removeLinkElement.setAttribute('href', `/users/delete/${payload._id}`)
+                removeLinkElement.innerText = 'Удалить'
+
+
+                row.cells[0].innerText = payload._id
+                row.cells[1].innerText = payload.name;
+                row.cells[2].innerText = payload.age;
+                row.cells[3] = editLinkElement;
+                row.cells[4] = removeLinkElement;*/
+            }
+        }
+    </script>
 </body>
 <html>
